@@ -216,9 +216,13 @@ fn read_position(
         };
         let value = field(call, handler, "__songlua_spline_mode")?;
         let mode = text(call, value, false)?;
-        if !mode.eq_ignore_ascii_case("NoteColumnSplineMode_Position") {
+        let absolute = if mode.eq_ignore_ascii_case("NoteColumnSplineMode_Position") {
+            true
+        } else if mode.eq_ignore_ascii_case("NoteColumnSplineMode_Offset") {
+            false
+        } else {
             return Ok(None);
-        }
+        };
         let spline = field(call, handler, "__songlua_spline")?;
         let spline = table(call, spline)?;
         call.with_roots(&[Value::Table(spline)], |call| {
@@ -240,8 +244,9 @@ fn read_position(
                 scratch.points.clear();
                 scratch.points.reserve_exact(size);
                 let looping = field(call, spline, "__songlua_spline_loop")?.is_truthy();
-                let mut unchanged =
-                    previous.is_some_and(|p| p.coefficients.len() == size && p.looping == looping);
+                let mut unchanged = previous.is_some_and(|p| {
+                    p.absolute == absolute && p.coefficients.len() == size && p.looping == looping
+                });
                 for index in 1..=size {
                     let values = point(call, points, index)?;
                     if values.iter().any(|v| !v.is_finite()) {
@@ -270,6 +275,7 @@ fn read_position(
                     Arc::from(scratch.solver.solve_with_loop(&scratch.points, looping))
                 };
                 let result = Spline {
+                    absolute,
                     coefficients,
                     constant,
                     looping,

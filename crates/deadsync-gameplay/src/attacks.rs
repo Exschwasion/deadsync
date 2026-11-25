@@ -1002,6 +1002,7 @@ pub enum SongLuaColumnTransformTarget {
 /// Immutable solved spline, produced at song load, never solved during play.
 #[derive(Clone, Debug, PartialEq)]
 pub struct SongLuaSplineData {
+    pub absolute: bool,
     pub coefficients: std::sync::Arc<[[[f32; 4]; 3]]>,
     pub constant: bool,
     pub looping: bool,
@@ -1258,7 +1259,7 @@ impl SongLuaSplineData {
     pub fn view(&self) -> SongLuaPositionSpline<'_> {
         SongLuaPositionSpline {
             enabled: true,
-            absolute: true,
+            absolute: self.absolute,
             coefficients: &self.coefficients,
             constant: self.constant,
             looping: self.looping,

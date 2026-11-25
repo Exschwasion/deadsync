@@ -1670,6 +1670,7 @@ mod tests {
         let timing = TimingData::default();
         let hides = SongLuaNoteHideWindows::default();
         let data = |points: &[[f32; 3]]| SongLuaSplineData {
+            absolute: true,
             coefficients: deadsync_gameplay::solve_song_lua_spline(points).into(),
             constant: false,
             looping: false,
@@ -3581,6 +3582,7 @@ mod tests {
             let spline = |key: &str| {
                 let points: Vec<[f32; 3]> = serde_json::from_value(frame[key].clone()).unwrap();
                 SongLuaSplineData {
+                    absolute: true,
                     coefficients: deadsync_gameplay::solve_song_lua_spline(&points).into(),
                     constant: false,
                     looping: false,
@@ -3656,6 +3658,7 @@ mod tests {
                         SongLuaColumnSplineFrame {
                             second,
                             position: Some(SongLuaSplineData {
+                                absolute: true,
                                 coefficients: deadsync_gameplay::solve_song_lua_spline(&[
                                     [16.0 * beat, -32.0 * beat, 8.0 * beat],
                                     [
@@ -3672,6 +3675,7 @@ mod tests {
                                 subtract_song_beat: true,
                             }),
                             zoom: Some(SongLuaSplineData {
+                                absolute: true,
                                 coefficients: deadsync_gameplay::solve_song_lua_spline(&[
                                     [1.0 + beat; 3],
                                     [2.0 + beat; 3],
@@ -3898,6 +3902,7 @@ mod tests {
                 .map(|(index, sign)| SongLuaColumnSplineFrame {
                     second: index as f32 / 60.0,
                     position: Some(SongLuaSplineData {
+                        absolute: true,
                         coefficients: deadsync_gameplay::solve_song_lua_spline(&[
                             [0.0, sign * 200.0, 0.0],
                             [0.0, sign * 100.0, 0.0],

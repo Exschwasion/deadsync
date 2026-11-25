@@ -817,7 +817,8 @@ pub fn prepare_notefield<'a, S>(
                             return false;
                         };
                         let compatible = |other: &deadsync_gameplay::SongLuaSplineData| {
-                            b.beats_per_t == other.beats_per_t
+                            b.absolute == other.absolute
+                                && b.beats_per_t == other.beats_per_t
                                 && b.receptor_t == other.receptor_t
                                 && b.subtract_song_beat == other.subtract_song_beat
                                 && b.looping == other.looping
@@ -852,6 +853,7 @@ pub fn prepare_notefield<'a, S>(
                         ),
                     ] {
                         if let (Some(spline), Some(other_spline)) = (spline, other_spline)
+                            && spline.absolute == other_spline.absolute
                             && spline.beats_per_t == other_spline.beats_per_t
                             && spline.receptor_t == other_spline.receptor_t
                             && spline.subtract_song_beat == other_spline.subtract_song_beat
